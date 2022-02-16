@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.text.demo.mapper.system.LoginMapper">
+
+    <resultMap id="userRes" type="com.text.demo.entity.UserEntity">
+        <result property="id" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="realName" column="real_name"/>
+        <result property="portrait" column="portrait"/>
+        <result property="salt" column="salt"/>
+        <result property="locked" column="locked"/>
+        <result property="createTime" column="create_time"/>
+        <result property="email" column="email"/>
+        <result property="createUserId" column="create_user_id"/>
+    </resultMap>
+
+    <!--校验用户名密码-->
+    <select id="getUser" resultType="Boolean" parameterType="String">
+        select count(*) from system_user where password = #{password} and username = #{username}
+    </select>
+
+    <!--通过用户名密码查找用户信息-->
+    <select id="getUserMsg" resultMap="userRes" parameterType="String">
+        select * from system_user where  password = #{password} and username = #{username}
+    </select>
+
+
+    <select id="getUserById" resultMap="userRes" parameterType="int">
+        select * from system_user where id = #{id}
+    </select>
+
+
+    <!--................................样本.............................-->
+    <!--添加-->
+    <insert id="register" parameterType="UserEntity">
+        insert into user(name,gender,user,state,phone,company_id)
+        values (
+        #{name}
+        ,#{gender}
+        ,#{user}
+        ,#{state}
+        ,#{phone}
+        ,#{companyId}
+        )
+    </insert>
+
+    <!--删除-->
+    <delete id="delUser" parameterType="int">
+        delete from user where id = #{id}
+    </delete>
+
+    <!--修改-->
+    <update id="updateUser" parameterType="userEntity">
+        update user set
+        name = #{name}
+        where id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.text.demo.mapper.base.OrderMapper">
+
+    <resultMap id="orderRes" type="com.text.demo.entity.OrderEntity">
+        <result property="id" column="trade_id"/>
+        <result property="playId" column="play_id"/>
+        <result property="playName" column="playName"/>
+        <result property="price" column="price"/>
+        <result property="hour" column="hour"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="payAmount" column="pay_amount"/>
+        <result property="payStatus" column="pay_status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="payTimeDate" column="pay_time"/>
+        <result property="contactPhone" column="contact_phone"/>
+        <result property="userName" column="nick_name"/>
+    </resultMap>
+
+    <!-- 订单列表 -->
+    <select id="orderList" resultMap="orderRes" parameterType="Object">
+        select
+        a.*
+        ,b.nick_name playName
+        from user_trade a
+        left join play b on a.play_id = b.play_id
+        where 1=1
+        <if test="payStatus !=null and payStatus != ''">
+            and a.pay_status = #{payStatus}
+        </if>
+        <if test="playName !=null and playName != ''">
+            and b.nick_name like "%"#{playName}"%"
+        </if>
+        <if test="tradeId !=null and tradeId != ''">
+            and a.trade_id = #{tradeId}
+        </if>
+        limit #{current},#{nowPageSize}
+    </select>
+
+    <!-- 订单列表总数 -->
+    <select id="getTotal" resultType="int" parameterType="Object">
+        select count(*) from user_trade a
+        left join play b on a.play_id = b.play_id
+        where 1=1
+        <if test="payStatus !=null and payStatus != ''">
+            and a.pay_status = #{payStatus}
+        </if>
+        <if test="playName !=null and playName != ''">
+            and b.nick_name like "%"#{playName}"%"
+        </if>
+        <if test="tradeId !=null and tradeId != ''">
+            and a.trade_id = #{tradeId}
+        </if>
+    </select>
+
+    <!-- 通过id查找订单详情 -->
+    <select id="orderSelectById" resultMap="orderRes" parameterType="int">
+        select * from user_trade where trade_id = #{id}
+    </select>
+
+    <!--添加-->
+    <insert id="orderSave" parameterType="OrderEntity">
+        insert into user_trade(play_id,play_name
+        ,price,hour,total_amount,pay_amount,pay_status,create_time,pay_time)
+        values (
+        ,#{play_id}
+        ,#{playName}
+        ,#{price}
+        ,#{hour}
+        ,#{totalAmount}
+        ,#{payAmount}
+        ,#{payStatus}
+        ,#{createTime}
+        ,#{payTime}
+        )
+    </insert>
+
+    <!--修改-->
+    <update id="orderEdit" parameterType="OrderEntity">
+        update user_trade set
+        play_id = #{playId}
+        ,playName = #{playName}
+        ,price = #{price}
+        ,hour = #{hour}
+        ,totalAmount = #{totalAmount}
+        ,payAmount = #{pay_amount}
+        ,payStatus = #{pay_status}
+        ,createTime = #{create_time}
+        ,payTime = #{pay_time}
+        where id = #{trade_id}
+    </update>
+
+    <!--删除-->
+    <update id="deleteData" parameterType="int[]">
+        update user_trade set
+        deleted = 1
+        where trade_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

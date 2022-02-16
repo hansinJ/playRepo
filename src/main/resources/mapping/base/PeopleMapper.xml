@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.text.demo.mapper.base.PeopleMapper">
+    <resultMap id="peopleRes" type="com.text.demo.entity.PeopleEntity">
+        <result property="id" column="play_id"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="portrait" column="portrait"/>
+        <result property="lifePhoto" column="life_photo"/>
+        <result property="intro" column="intro"/>
+        <result property="phone" column="phone"/>
+        <result property="businessStatus" column="business_status"/>
+        <result property="price" column="price"/>
+        <result property="discountPrice" column="discount_price"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUser" column="create_user"/>
+        <result property="lastUpdateUser" column="last_update_user"/>
+        <result property="lastUpdateTime" column="last_update_time"/>
+        <result property="playState" column="play_state"/>
+        <result property="labels" column="labels"/>
+        <result property="status" column="status"/>
+        <result property="makeMoney" column="make_money"/>
+        <result property="realName" column="real_name"/>
+    </resultMap>
+
+    <!-- 人员列表 -->
+    <select id="peopleList" resultMap="peopleRes">
+        select a.* from play a
+        left join category_play b on a.play_id = b.play_id
+        left join category c on b.category_id = c.category_id
+        where a.deleted = false
+        <if test="playState !=null and playState != ''">
+            and c.category_id in
+            <foreach collection="playState" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="nickName !=null and nickName != ''">
+            and a.nick_name like #{nickName}
+        </if>
+        <if test="businessStatus !=null and businessStatus != ''">
+            and a.business_status = #{businessStatus}
+        </if>
+        order by a.create_time desc
+    </select>
+
+    <!-- 人员列表总条数 -->
+    <select id="getTotal" resultMap="peopleRes" parameterType="Object">
+        select a.* from play a
+        left join category_play b on a.play_id = b.play_id
+        left join category c on b.category_id = c.category_id
+        where a.deleted = false
+        <if test="playState !=null and playState != ''">
+            and c.category_id in
+            <foreach collection="playState" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="nickName !=null and nickName != ''">
+            and a.nick_name like #{nickName}
+        </if>
+        <if test="businessStatus !=null and businessStatus != ''">
+            and a.business_status = #{businessStatus}
+        </if>
+    </select>
+
+    <!-- 查找陪玩类型所有数据 -->
+    <select id="getPlayStateList" resultType="Map">
+        select category_id id,category_name name from category
+    </select>
+
+    <!-- 通过人员id查找陪玩类型数据 -->
+    <select id="getPlayStateListById" resultType="PlayStateEntity">
+        select b.category_id id,b.category_name name from category_play a
+        left join category b on a.category_id = b.category_id where a.play_id = #{playId}
+    </select>
+
+    <!--添加人员陪玩类型关联-->
+    <insert id="savePlayState" parameterType="Object">
+        insert into category_play(category_id,play_id)
+        values (
+        #{playState}
+        ,#{playId}
+        )
+    </insert>
+    <!-- 通过人员id查找陪玩类型数据 -->
+    <select id="getPeopleId" resultType="int">
+        select play_id from play order by create_time desc limit 1
+    </select>
+    <!--删除-->
+    <delete id="delPlayState" parameterType="int">
+        delete from category_play where play_id = #{playId}
+    </delete>
+
+    <!--添加-->
+    <insert id="peopleSave" parameterType="PeopleAndPlayEntity">
+        insert into play(nick_name,portrait,life_photo,intro,phone
+        ,price,discount_price,create_time
+        ,create_user,last_update_user,last_update_time,play_state,labels,make_money,status,real_name)
+        values (
+        #{nickName}
+        ,#{portrait}
+        ,#{lifePhoto}
+        ,#{intro}
+        ,#{phone}
+        ,#{price}
+        ,#{discountPrice}
+        ,#{createTime}
+        ,#{createUser}
+        ,#{lastUpdateUser}
+        ,#{lastUpdateTime}
+        ,#{playState}
+        ,#{labels}
+        ,#{makeMoney}
+        ,'Enable'
+        ,#{realName}
+        )
+    </insert>
+
+    <!-- 通过id查找订单详情 -->
+    <select id="peopleDetail" resultMap="peopleRes" parameterType="int">
+        select * from play where play_id = #{id}
+    </select>
+
+    <!-- 修改上下架状态 -->
+    <update id="toUpperAndLower" parameterType="Object">
+        update play set
+        status = #{frameState}
+        where play_id = #{id}
+    </update>
+
+    <!--修改-->
+    <update id="peopleEdit" parameterType="PeopleAndPlayEntity">
+        update play set
+        nick_name = #{nickName}
+        ,portrait = #{portrait}
+        ,life_photo = #{lifePhoto}
+        ,intro = #{intro}
+        ,phone = #{phone}
+        ,price = #{price}
+        ,discount_price = #{discountPrice}
+        ,last_update_user = #{lastUpdateUser}
+        ,last_update_time = #{lastUpdateTime}
+        ,play_state = #{playState}
+        ,labels = #{labels}
+        ,make_money = #{makeMoney}
+        ,real_name = #{realName}
+        where play_id = #{id}
+    </update>
+
+    <!--删除-->
+    <delete id="deleteData" parameterType="int[]">
+        delete from play  where trade_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <!--删除-->
+    <update id="deleteDataOne" parameterType="int">
+        update play set deleted = true where play_id = #{id}
+    </update>
+</mapper>

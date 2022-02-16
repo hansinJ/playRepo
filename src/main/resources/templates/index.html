@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎来到demo</title>
+</head>
+<body>
+
+<div style="position: absolute;top: 5%;left: 5%;" id="addUser">
+    <button class="btn" onclick="addUser()">新增用户</button>
+</div>
+
+<div style="position: absolute;top: 15%;left: 5%;">
+    当前企业所有用户：
+    <button class="btn" onclick="getCompanyUser()">点击获取</button>
+</div>
+
+<div style="position: absolute;top: 25%;left: 5%;">
+    &nbsp;&nbsp;&nbsp;&nbsp;用户id：<input id="userId" value=""><br/>
+    用户类型：<input id="state" value=""><br/>
+    <button class="btn" onclick="delUser()">删除用户</button><br/>
+    <button class="btn" onclick="selectUserAndCompany()">查看用户</button><br/>
+    <button class="btn" onclick="updateUser()">修改用户</button><br/>
+    用户名称：<input id="name" value=""><br/>
+</div>
+
+<div style="position: absolute;top: 30%;right: 5%;">
+    <button class="btn" onclick="driverList()">司机列表</button>
+    <button class="btn" onclick="deleteDriver()">删除</button>
+    <button class="btn" onclick="driverSave()">新增</button>
+    <button class="btn" onclick="driverEdit()">修改</button>
+    <button class="btn" onclick="driverSelect()">查看</button>
+</div>
+
+<div id="publicText" style="position: absolute;right: 17%;top: 10%;">
+    通用id：<input id="publicId" value=""><br/>
+    通用名称：<input id="publicName" value=""><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;当前页：<input id="currentPage" value=""><br/>
+    当前页数量：<input id="nowPageSize" value=""><br/>
+</div>
+
+<div style="position: absolute;top: 40%;right: 5%;">
+    <button class="btn" onclick="delUser()">车辆列表</button>
+    <button class="btn" onclick="delUser()">删除</button>
+    <button class="btn" onclick="delUser()">新增</button>
+    <button class="btn" onclick="delUser()">修改</button>
+    <button class="btn" onclick="delUser()">查看</button>
+</div>
+    <button class="btn" style="position: absolute;right: 2rem;top: 1rem;" onclick="back()">退出登入</button>
+    <div id="title" class="succ"></div><br/>
+    <div style="position: absolute;bottom: 30%;left: 10%;" id="msg"></div>
+</body>
+<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+<script>
+    var url= window.location.href;
+    var http= url.match(/^h.+:\d+/)[0];
+
+    window.onload = function(){
+        // 初始化方法
+        let state = sessionStorage.getItem("state");
+        let phone = sessionStorage.getItem("user");
+        document.getElementById("title").innerText = `用户${phone}登录成功！！！`;
+        var addUser = document.getElementById("addUser").style;
+        if(state != 1){
+            addUser.display = "none";
+        }else {
+            addUser.display = "bock";
+        }
+    };
+
+    function updateUser() {
+        //修改用户  这里用后端处理权限
+        $.ajax({
+            type: "POST",
+            url: http + "/updateUser",
+            data: {
+                id: $("#userId").val(),
+                name: $("#name").val(),
+            },
+            dataType: "json",
+            success: function(res){
+                if(res.data){
+                    alert("修改成功！！");
+                }else {
+                    alert("抱歉您没有权限！！")
+                }
+            }
+        });
+    }
+
+    // 删除用户
+    function delUser() {
+        let state = sessionStorage.getItem("state");
+        var nowState = $("#state").val();
+        if(!nowState || !$("#userId").val()){
+            alert("请输入id和用户类型！！")
+            return false;
+        }
+        if(state != 1 && nowState == 1){
+            alert("抱歉您没有权限！！")
+            return false;
+        }
+        // 可以 后台session取当前用户信息进行校验反馈信息  这里用前端处理权限
+        // 删除用户信息
+        $.ajax({
+            type: "POST",
+            url: http + "/delUser",
+            data: {
+                id: $("#userId").val(),
+            },
+            dataType: "json",
+            success: function(res){
+                if(res.data){
+                    alert("删除成功！！");
+                }else {
+                    alert("抱歉，当前用户已登入无法删除！！")
+                }
+            }
+        });
+    }
+
+    function selectUserAndCompany() {
+        // 查看用户 只能管理员能看到企业信息
+        if(!$("#userId").val()){
+            alert("请输入id！！")
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: http + "/selectUserAndCompany",
+            data: {
+                id: $("#userId").val(),
+            },
+            dataType: "json",
+            success: function(res){
+                console.log(res.data)
+                document.getElementById("msg").innerText = JSON.stringify(res.data);
+            }
+        });
+    }
+
+    function getCompanyUser() {
+        // 获取当前企业所有用户
+        $.ajax({
+            type: "POST",
+            url: http + "/getCompanyUser",
+            data: {
+                companyId: sessionStorage.getItem("companyId"),
+            },
+            dataType: "json",
+            success: function(res){
+                console.log(res.data)
+                document.getElementById("msg").innerText = JSON.stringify(res.data);
+            }
+        });
+    }
+
+    function addUser() {
+        // 只有管理员有新增权限
+        let count = parseInt(Math.random()*1000);
+        let countTwo = parseInt(Math.random()*1000);
+        //新增用户
+        $.ajax({
+            type: "POST",
+            url: http + "/register",
+            data: {
+                name: `张${count}`,
+                gender: 1,
+                state: 2,
+                companyId: 1,
+                phone: `${count}${countTwo}`,
+                user: "user",
+            },
+            dataType: "json",
+            success: function(res){
+                alert("新增用户成功！！")
+            }
+        });
+    }
+
+    //退出登入
+    function back(){
+        $.ajax({
+            type: "POST",
+            url: http + "/back",
+            data: {
+            },
+            dataType: "json",
+            success: function(res){
+                if (res.data){
+                    sessionStorage.removeItem("user");
+                    window.location.href = http + "/login";
+                }
+            }
+        });
+    }
+
+    /**
+     * 司机模块数据
+     *  publicId publicName currentPage nowPageSize
+     */
+    function driverList() {
+        $.ajax({
+            type: "POST",
+            url: http + "/driverList",
+            data: {
+                name: $("#publicName").val(),
+                currentPage: $("#currentPage").val(),
+                nowPageSize: $("#nowPageSize").val(),
+            },
+            dataType: "json",
+            success: function(res){
+                console.log(res.data);
+            }
+        });
+    }
+
+    function deleteDriver() {
+        var ids = [];
+        let publicId = $("#publicId").val().split(",");
+        for (let i=0;i<publicId.length;i++){
+            ids.push(publicId[i]);
+        }
+        $.ajax({
+            type: "POST",
+            url: http + "/deleteDriver",
+            data: {
+                ids:ids,
+            },
+            traditional:true,
+            dataType: "json",
+            success: function(res){
+                if(res.data){
+                    alert("删除司机成功！！")
+                }else {
+                    alert("删除司机失败！！")
+                }
+            }
+        });
+    }
+
+    function driverSave() {
+        //新增  车辆和人必须在同一个公司
+        let count = parseInt(Math.random()*1000);
+        var carId = parseInt(Math.random()*3);
+        var companyId = parseInt(Math.random()*5);
+        if(carId == 0){
+            carId = 1;
+        }
+        if(companyId == 0){
+            companyId = 1;
+        }
+        $.ajax({
+            type: "POST",
+            url: http + "/driverSave",
+            data: {
+                phone: `${count}${count}`,
+                card:`${count}`,
+                goCard:`${count}`,
+                name:`张${count}`,
+                carId: carId,
+                companyId: companyId,
+            },
+            dataType: "json",
+            success: function(res){
+                if(res.data){
+                    alert("新增司机成功！！")
+                }else {
+                    alert("新增司机失败，原因车辆司机不在同一个公司！！")
+                }
+            }
+        });
+    }
+    function driverEdit() {
+        // 修改 关联的车辆是下拉框选择
+        let count = parseInt(Math.random()*1000);
+        var carId = parseInt(Math.random()*3);
+        var companyId = parseInt(Math.random()*5);
+        if(carId == 0){
+            carId = 1;
+        }
+        if(companyId == 0){
+            companyId = 1;
+        }
+        $.ajax({
+            type: "POST",
+            url: http + "/driverEdit",
+            data: {
+                id: $("#publicId").val(),
+                phone: `${count}${count}`,
+                card:`${count}`,
+                goCard:`${count}`,
+                name:`李${count}`,
+                carId: carId,
+                companyId: companyId,
+            },
+            dataType: "json",
+            success: function(res){
+                if(res.data){
+                    alert("修改司机成功！！")
+                }else {
+                    alert("新增司机失败，原因车辆司机不在同一个公司！！")
+                }
+            }
+        });
+    }
+
+    function driverSelect() {
+        // 查看
+        $.ajax({
+            type: "POST",
+            url: http + "/driverSelect",
+            data: {
+                id: $("#publicId").val(),
+            },
+            dataType: "json",
+            success: function(res){
+                console.log(res.data);
+                document.getElementById("msg").innerText = JSON.stringify(res.data);
+            }
+        });
+    }
+</script>
+<style>
+    *{
+        margin: 0;
+    }
+    html,body{
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+    }
+    .btn{
+        width: 5rem;
+        height: 2.2rem;
+        font-size: 1rem;
+    }
+    .succ{
+        font-size: 3rem;
+    }
+</style>
+</html>

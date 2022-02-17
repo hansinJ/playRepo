@@ -48,13 +48,10 @@ public class SwaggerConfig extends WebMvcConfigurationSupport implements Environ
         StopWatch watch = new StopWatch();
         watch.start();
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
-//                .groupName("pay")
                 .apiInfo(this.apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.text.demo.controller"))
                 .paths(PathSelectors.any())
-//                .apis(RequestHandlerSelectors.any())
-//                .paths(regex("/v1/.*"))
                 .build();
         watch.stop();
         log.info("Started Swagger in {} ms", watch.getTotalTimeMillis());
@@ -63,8 +60,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport implements Environ
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("pie")
-                .description("pie")
+                .title("play-backend")
+                .description("play-backend")
                 .version("1.0.0")
                 .build();
     }

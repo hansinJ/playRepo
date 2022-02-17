@@ -9,13 +9,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-@MapperScan("com.text.demo.mapper.**")
-@SpringBootApplication
+@MapperScan("com.text.demo.mapper")
+@SpringBootApplication(scanBasePackages = {"com.text.demo.controller", "com.text.demo.service", "com.text.demo.config"})
 public class DemoApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
     }
+
     private static final String PATH = "/**";
 
     private CorsConfiguration buildConfig() {

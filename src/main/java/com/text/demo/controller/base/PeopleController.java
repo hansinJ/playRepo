@@ -179,7 +179,7 @@ public class PeopleController {
 
     @ApiOperation("排序")
     @ResponseBody
-    @PutMapping
+    @PutMapping("sort")
     public ApiResult sort(@RequestBody List<PlaySort> playSorts) {
         ApiResult apiResult = new ApiResult();
         if (CollectionUtils.isEmpty(playSorts) || playSorts.stream().anyMatch(p -> p.getPlayId() == null || p.getPlayId().compareTo(0) < 1)) {

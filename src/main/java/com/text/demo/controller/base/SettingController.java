@@ -37,6 +37,7 @@ public class SettingController {
     @GetMapping
     public JsonResult list() {
         JsonResult res = new JsonResult();
+        res.setCode(0);
         res.setData(settingServiceImpl.list());
         return res;
     }

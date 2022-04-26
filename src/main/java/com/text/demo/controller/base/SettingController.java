@@ -1,16 +1,14 @@
 package com.text.demo.controller.base;
 
+import com.text.demo.entity.Setting;
 import com.text.demo.service.base.impl.SettingServiceImpl;
 import com.text.demo.utils.JsonResult;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("setting")
 public class SettingController {
     @Autowired
@@ -18,18 +16,24 @@ public class SettingController {
 
     @ApiOperation("新增/修改")
     @PostMapping
-    public JsonResult setting(@RequestParam(required = false) Integer settingId,
-                              @RequestParam String value) {
+    public JsonResult setting(@RequestBody Setting setting) {
         JsonResult res = new JsonResult();
-        if (settingId == null) {
-            res.setData(settingServiceImpl.insert(value));
+        if (setting == null) {
+            res.setCode(-1);
+            res.setMsg("参数无效");
             return res;
         }
-        res.setData(settingServiceImpl.update(settingId, value));
+        if (setting != null && setting.getSettingId() == null) {
+            res.setCode(0);
+            res.setData(settingServiceImpl.insert(setting.getValue()));
+            return res;
+        }
+        res.setCode(0);
+        res.setData(settingServiceImpl.update(setting.getSettingId(), setting.getValue()));
         return res;
     }
 
-    @ApiOperation("新增/修改")
+    @ApiOperation("列表")
     @GetMapping
     public JsonResult list() {
         JsonResult res = new JsonResult();

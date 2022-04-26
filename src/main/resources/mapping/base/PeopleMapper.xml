@@ -160,4 +160,11 @@
     <update id="deleteDataOne" parameterType="int">
         update play set deleted = true where play_id = #{id}
     </update>
+
+    <update id="sortPlay" parameterType="list">
+        <foreach collection="list" separator=";" item="item">
+            update play set sort = #{item.sort}
+            where play_id = #{item.playId}
+        </foreach>
+    </update>
 </mapper>

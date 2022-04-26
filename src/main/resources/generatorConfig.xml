@@ -43,9 +43,9 @@
 
         <!--        <table tableName="banner" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"></table>-->
 
-        <table tableName="setting" enableCountByExample="false" enableUpdateByExample="false"
-               enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">
-            <generatedKey column="setting_id" sqlStatement="MySql" identity="true"/>
-        </table>
+<!--        <table tableName="setting" enableCountByExample="false" enableUpdateByExample="false"-->
+<!--               enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">-->
+<!--            <generatedKey column="setting_id" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
     </context>
 </generatorConfiguration>

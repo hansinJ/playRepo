@@ -2,6 +2,7 @@ package com.text.demo.mapper.base;
 
 import com.text.demo.entity.PeopleAndPlayEntity;
 import com.text.demo.entity.PeopleEntity;
+import com.text.demo.entity.PlaySort;
 import com.text.demo.entity.PlayStateEntity;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -35,4 +36,6 @@ public interface PeopleMapper {
     void delPlayState(@Param("playId")int id);
 
     int getPeopleId();
+
+    int sortPlay(@Param("list")List<PlaySort> sorts);
 }

@@ -2,12 +2,16 @@ package com.text.demo.controller.base;
 
 import com.text.demo.entity.PeopleAndPlayEntity;
 import com.text.demo.entity.PeopleEntity;
+import com.text.demo.entity.PlaySort;
+import com.text.demo.model.ApiResult;
 import com.text.demo.service.base.PeopleService;
 import com.text.demo.utils.JsonResult;
 import com.text.demo.utils.UuidUtil;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -133,6 +137,7 @@ public class PeopleController {
 
     /**
      * 图片上传
+     *
      * @param files
      * @param request
      * @return
@@ -140,17 +145,17 @@ public class PeopleController {
      */
     @ResponseBody
     @RequestMapping(value = "upload", method = RequestMethod.POST)
-    public Map<String,Object> excelImport(List<MultipartFile> files, HttpServletRequest request) throws IOException {
+    public Map<String, Object> excelImport(List<MultipartFile> files, HttpServletRequest request) throws IOException {
         String url = "";
-        Map<String,Object> data = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
         if (files != null) {
-            for (MultipartFile file: files) {
+            for (MultipartFile file : files) {
                 String filename = UuidUtil.createUUID() + file.getOriginalFilename();
                 SaveFileFromInputStream(file.getInputStream(), serverUrl, filename);//保存到服务器的路径
                 url = url + filename + ",";
             }
         }
-        data.put("data",url.substring(0,url.length()-1));
+        data.put("data", url.substring(0, url.length() - 1));
         return data;
     }
 
@@ -170,5 +175,17 @@ public class PeopleController {
         }
         fs.close();
         stream.close();
+    }
+
+    @ApiOperation("排序")
+    @ResponseBody
+    @PutMapping
+    public ApiResult sort(@RequestBody List<PlaySort> playSorts) {
+        ApiResult apiResult = new ApiResult();
+        if (CollectionUtils.isEmpty(playSorts) || playSorts.stream().anyMatch(p -> p.getPlayId() == null || p.getPlayId().compareTo(0) < 1)) {
+            return apiResult.setCode(-1).setMessage("参数无效");
+        }
+
+        return apiResult.setData(peopleService.sortPlay(playSorts));
     }
 }

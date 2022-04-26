@@ -26,6 +26,17 @@ public class PeopleAndPlayEntity {
     BigDecimal makeMoney;
     String realName;
     int[] playStates;
+
+    private Integer sort;
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
     public int getId() {
         return id;
     }

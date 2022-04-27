@@ -40,6 +40,7 @@ public class PeopleServiceImpl implements PeopleService {
             peopleEntity.setPlayStateList(peopleMapper.getPlayStateListById(peopleEntity.getId()));
         }
         //对list进行分片
+//        resDistinctByKey.sort(Comparator.comparing(PeopleEntity::getSortTemp).thenComparing(PeopleEntity::getSort));
         List<List<PeopleEntity>> pageList = ListUtils.partition(resDistinctByKey, nowPageSize);
         int totals = 0;
         if (null != totalDistinctByKey) {

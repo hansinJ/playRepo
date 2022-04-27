@@ -26,6 +26,26 @@ public class PeopleEntity {
     String realName;
     List<PlayStateEntity> playStateList;
     List<Integer> playStates;
+    private Integer sort;
+
+    private Integer sortTemp;
+
+    public Integer getSortTemp() {
+        return sortTemp;
+    }
+
+    public void setSortTemp(Integer sortTemp) {
+        this.sortTemp = sortTemp;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
     public int getId() {
         return id;
     }
@@ -200,5 +220,35 @@ public class PeopleEntity {
 
     public void setPlayState(int playState) {
         this.playState = playState;
+    }
+
+    @Override
+    public String toString() {
+        return "PeopleEntity{" +
+                "id=" + id +
+                ", nickName='" + nickName + '\'' +
+                ", portrait='" + portrait + '\'' +
+                ", lifePhoto='" + lifePhoto + '\'' +
+                ", intro='" + intro + '\'' +
+                ", phone='" + phone + '\'' +
+                ", businessStatus='" + businessStatus + '\'' +
+                ", price=" + price +
+                ", discountPrice=" + discountPrice +
+                ", packagePrice=" + packagePrice +
+                ", createTime=" + createTime +
+                ", createUser=" + createUser +
+                ", lastUpdateUser=" + lastUpdateUser +
+                ", lastUpdateTime=" + lastUpdateTime +
+                ", playState=" + playState +
+                ", playName='" + playName + '\'' +
+                ", labels='" + labels + '\'' +
+                ", makeMoney='" + makeMoney + '\'' +
+                ", status='" + status + '\'' +
+                ", realName='" + realName + '\'' +
+                ", playStateList=" + playStateList +
+                ", playStates=" + playStates +
+                ", sort=" + sort +
+                ", sortTemp=" + sortTemp +
+                '}';
     }
 }

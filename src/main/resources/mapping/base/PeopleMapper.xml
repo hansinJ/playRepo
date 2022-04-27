@@ -22,13 +22,14 @@
         <result property="status" column="status"/>
         <result property="makeMoney" column="make_money"/>
         <result property="realName" column="real_name"/>
+        <result property="sort" column="sort"/>
     </resultMap>
 
     <!-- 人员列表 -->
     <select id="peopleList" resultMap="peopleRes">
         select a.* from play a
-        left join category_play b on a.play_id = b.play_id
-        left join category c on b.category_id = c.category_id
+        inner join category_play b on a.play_id = b.play_id
+        inner join category c on b.category_id = c.category_id
         where a.deleted = false
         <if test="playState !=null and playState != ''">
             and c.category_id in
@@ -42,7 +43,7 @@
         <if test="businessStatus !=null and businessStatus != ''">
             and a.business_status = #{businessStatus}
         </if>
-        order by a.create_time desc
+        order by if(a.sort=0, 1, 0) asc, a.sort asc, a.play_id desc
     </select>
 
     <!-- 人员列表总条数 -->
@@ -63,6 +64,7 @@
         <if test="businessStatus !=null and businessStatus != ''">
             and a.business_status = #{businessStatus}
         </if>
+        order by if(a.sort is null, 1, 0) asc, a.play_id desc
     </select>
 
     <!-- 查找陪玩类型所有数据 -->
